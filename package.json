@@ -1,0 +1,24 @@
+{
+	"name": "loginpageapiauthjwt",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"start:frontend": "npm --prefix frontend run start",
+		"start:backend": "npm --prefix backend run start",
+		"start": "concurrently \"npm run start:frontend\" \"npm run start:backend\""
+	},
+	"keywords": [],
+	"author": "Alessandro LAMPARELLI",
+	"license": "MIT",
+	"description": " PA004 - Login Page & API Auth - JWT",
+	"devDependencies": {
+		"concurrently": "^9.0.1",
+		"eslint": "^9.12.0",
+		"prettier": "^3.3.3"
+	},
+	"email": "alessandro@lamparelli.eu",
+	"type": "module",
+	"dependencies": {
+		"dotenv": "^16.4.5"
+	}
+}
