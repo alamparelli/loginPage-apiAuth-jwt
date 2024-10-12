@@ -1,17 +1,37 @@
 import { Router } from 'express';
 import { addUser, queryUser } from '../controllers/database.js';
 import { createAccessToken } from '../controllers/authentication.js';
+import { body, validationResult } from 'express-validator';
 
 const router = Router();
 
-router.post('/register', (req, res) => {
-	try {
-		const { username, password, role } = req.body;
-		res.json(addUser(username, password, role));
-	} catch (error) {
-		res.json({ error: error.message });
-	}
-});
+router.post(
+	'/register',
+	[
+		body('username').isEmail().withMessage('Please enter a valid email'),
+		body('password')
+			.isLength({ min: 8, max: 256 })
+			.isStrongPassword()
+			.withMessage('Minimum 8 chars, max 25 chars'),
+		body('role')
+			.isString()
+			.isLength({ max: 10 })
+			.withMessage('Only STing accepted'),
+	],
+	(req, res) => {
+		try {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				// S'il y a des erreurs, les retourner au client
+				return res.status(400).json({ errors: errors.array() });
+			}
+			const { username, password, role } = req.body;
+			res.status(200).json(addUser(username, password, role));
+		} catch (error) {
+			res.status(400).json({ error: error.message });
+		}
+	},
+);
 
 router.post('/login', (req, res) => {
 	try {
@@ -27,12 +47,14 @@ router.post('/login', (req, res) => {
 				secure: true,
 				sameSite: 'Strict',
 			});
-			res.json({ token: 'accessToken', logged: true });
+			res.status(200).json({ token: 'accessToken', logged: true });
 		} else {
-			res.json({ Message: 'Username or Password incorrect', logged: false });
+			res
+				.status(403)
+				.json({ Message: 'Username or Password incorrect', logged: false });
 		}
 	} catch (error) {
-		res.json({ error: error.message, logged: false });
+		res.status(401).json({ error: error.message, logged: false });
 	}
 });
 
@@ -44,12 +66,12 @@ router.post('/logout', (req, res) => {
 				secure: true,
 				sameSite: 'Strict',
 			});
-			res.json({ message: 'Cookie cleared', logged: false });
+			res.status(200).json({ message: 'Cookie cleared', logged: false });
 		} else {
 			throw new Error('Auth Cookie not Found');
 		}
 	} catch (error) {
-		res.json({ error: error.message, logged: false });
+		res.status(401).json({ error: error.message, logged: false });
 	}
 });
 
