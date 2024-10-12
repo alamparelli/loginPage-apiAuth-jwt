@@ -1,16 +1,17 @@
 import { Router } from 'express';
 // import { body, validationResult } from 'express-validator';
-import { queryAll } from '../src/database.js';
+import { queryAll } from '../controllers/database.js';
+import { checkToken } from '../controllers/authentication.js';
 
 const router = Router();
 
-router.get('/alive', (req, res) => {
-	res.json({ message: 'message' });
-});
-
-router.get('/getusers', (req, res) => {
-	const query = queryAll();
-	res.json(query);
+router.get('/myprofile', (req, res) => {
+	if (checkToken(req.cookies.authcookie)) {
+		const query = queryAll();
+		res.json(query);
+	} else {
+		res.json({ Access: 'Not Authorized' });
+	}
 });
 
 export default router;
