@@ -3,7 +3,7 @@ import React from 'react';
 function LoginForm() {
 	return (
 		<div class="flex-container">
-			<form class="login-box-2">
+			<form class="login-box login-box-color">
 				<input
 					class="login-input"
 					type="email"
