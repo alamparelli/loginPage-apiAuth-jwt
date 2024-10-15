@@ -16,6 +16,14 @@ body {
 	height: 100vh;
 }
 
+.flex-container-user {
+	display: flex;
+	margin-top: 15%;
+	justify-content: left;
+	align-items: top;
+	height: 100vh;
+}
+
 .login-box {
 	display: flex;
 	flex-direction: column;
@@ -44,6 +52,12 @@ body {
 img {
 	padding: 1rem;
 	border-radius: 100%;
+}
+
+.img-page {
+	position: absolute;
+	top: 2rem;
+	right: 2rem;
 }
 
 .buttonlogin {

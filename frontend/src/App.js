@@ -7,7 +7,7 @@ import Admin from './pages/Admin.js';
 
 function App() {
 	return (
-		<body className="bg-green-200 min-h-screen">
+		<body>
 			<Router>
 				<Routes>
 					<Route path="/" element={<Login />} />
