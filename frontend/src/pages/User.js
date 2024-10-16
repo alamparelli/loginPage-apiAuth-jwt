@@ -15,7 +15,7 @@ function User() {
 				<div class="half-size">
 					<div class="settings-box">
 						<h2 class="label-userpage">Add User</h2>
-						<label class="label-userpage">UserName</label>
+						<label class="label-userpage">Username</label>
 						<div class="settings-box-sub">
 							<input
 								class="login-input login-input-size"
@@ -48,7 +48,7 @@ function User() {
 						</div>
 					</div>
 					<div class="settings-box">
-						<label class="label-userpage">Background Color</label>
+						<label class="label-userpage">Background color</label>
 						<div class="settings-box-sub">
 							<select
 								class="login-input login-input-size"
