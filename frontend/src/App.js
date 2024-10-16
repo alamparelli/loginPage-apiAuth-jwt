@@ -13,7 +13,6 @@ function App() {
 					<Route path="/" element={<Login />} />
 					<Route path="/LoginForm" element={<LoginForm />} />
 					<Route path="/User" element={<User />} />
-					<Route path="/Admin" element={<Admin />} />
 					<Route path="*" element={<Login />} />{' '}
 				</Routes>
 			</Router>

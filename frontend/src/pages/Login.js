@@ -5,7 +5,7 @@ function Login() {
 		<div class="flex-container">
 			<div class="login-box">
 				<img src="https://picsum.photos/200" alt="Placeholder" />
-				<button class="buttonlogin">Login</button>
+				<button class="button-layout button-box">Login</button>
 			</div>
 		</div>
 	);

@@ -22,7 +22,7 @@ function LoginForm() {
 					required=""
 				/>
 				<div>
-					<button class="buttonlogin">Login</button>
+					<button class="button-layout button-box">Login</button>
 				</div>
 			</form>
 		</div>
