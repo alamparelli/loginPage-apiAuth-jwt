@@ -80,12 +80,8 @@ router.post('/logout', (req, res) => {
 router.post('/role', async (req, res) => {
 	try {
 		const { username } = req.body;
-		if (checkToken(req.cookies.authcookie)) {
-			const userRole = await getRole(username);
-			res.status(200).json({ role: userRole });
-		} else {
-			throw new Error('Failed to verify the accessToken');
-		}
+		const userRole = await getRole(username);
+		res.status(200).json({ role: userRole });
 	} catch (error) {
 		res.status(401).json({ error: error.message });
 	}

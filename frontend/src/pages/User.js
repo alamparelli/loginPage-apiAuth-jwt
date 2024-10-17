@@ -3,27 +3,38 @@ import { Link } from 'react-router-dom';
 import AuthContext from '../components/AuthContext';
 import { jwtDecode } from 'jwt-decode';
 
-async function User() {
+function User() {
 	const { accessToken } = useContext(AuthContext);
 	const [isVisible, setIsVisible] = useState(true);
 	const [username, setUsername] = useState('');
 
 	useEffect(() => {
-		const decodedToken = jwtDecode(accessToken);
-		setUsername(decodedToken.username);
-	}, []);
+		if (accessToken) {
+			const decodedToken = jwtDecode(accessToken);
+			setUsername(decodedToken.username);
+		}
 
-	const userRole = await fetch('http://localhost:4000/role', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({ username }),
-	});
+		const fetchUserRole = async () => {
+			try {
+				const response = await fetch('http://localhost:4000/role', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ username }),
+				});
 
-	if (userRole === 'user') {
-		setIsVisible(false);
-	}
+				const data = await response.json();
+				setIsVisible(data.role === 'user');
+			} catch (error) {
+				console.error('Error fetching user role:', error);
+			}
+		};
+
+		if (username) {
+			fetchUserRole();
+		}
+	}, [accessToken, username]);
 
 	return (
 		<div className="flex-container-user">
@@ -31,7 +42,7 @@ async function User() {
 				className="img-page"
 				src="https://picsum.photos/200"
 				alt="Placeholder"
-			/>{' '}
+			/>
 			<div className="flexbox-user-infos">
 				<h1>Welcome {username}!</h1>
 				<p>
@@ -41,42 +52,44 @@ async function User() {
 					odio dicta obcaecati at laudantium!
 				</p>
 				<div className="half-size">
-					<div className="settings-box">
-						<form>
-							<h2 className="label-userpage">Add User</h2>
-							<label className="label-userpage">Username</label>
-							<div className="settings-box-sub">
-								<input
-									className="login-input login-input-size"
-									type="email"
-									name="email"
-									id="email"
-									placeholder="Username"
-									required=""
-								/>
-								<button
-									className="button-layout button-box display-none"
-									type="button"
-								>
-									Create
-								</button>
-							</div>
-							<label className="label-userpage">Password</label>
-							<div className="settings-box-sub">
-								<input
-									className="login-input login-input-size"
-									type="password"
-									name="password"
-									id="password"
-									placeholder="Password"
-									required=""
-								/>
-								<button className="button-layout button-box" type="button">
-									Create
-								</button>
-							</div>
-						</form>
-					</div>
+					{!isVisible && (
+						<div className="settings-box">
+							<form>
+								<h2 className="label-userpage">Add User</h2>
+								<label className="label-userpage">Username</label>
+								<div className="settings-box-sub">
+									<input
+										className="login-input login-input-size"
+										type="email"
+										name="email"
+										id="email"
+										placeholder="Username"
+										required=""
+									/>
+									<button
+										className="button-layout button-box display-none"
+										type="button"
+									>
+										Create
+									</button>
+								</div>
+								<label className="label-userpage">Password</label>
+								<div className="settings-box-sub">
+									<input
+										className="login-input login-input-size"
+										type="password"
+										name="password"
+										id="password"
+										placeholder="Password"
+										required=""
+									/>
+									<button className="button-layout button-box" type="button">
+										Create
+									</button>
+								</div>
+							</form>
+						</div>
+					)}
 					<div className="settings-box">
 						<label className="label-userpage">Background color</label>
 						<div className="settings-box-sub">
