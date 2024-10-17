@@ -6,24 +6,32 @@ import { createHash, checkHash } from './authentication.js';
 const database = () => {
 	// Connect to or create the db
 	try {
-		const database = Database('localDb.db');
-		return database;
-	} catch (error) {
 		const database = new Database('localDb.db');
 		database.exec(userTable);
 		database.exec(settingsTable);
 		database.exec(roleTable);
 		return database;
+	} catch (error) {
+		const database = Database('localDb.db');
+		return database;
 	}
 };
 
 export const addUser = (username, password, role) => {
-	const hash = createHash(password);
-	const insert = database().prepare(
-		'INSERT INTO user (username, password, role, created_at ) VALUES (?, ?, ?,?)',
-	);
-	insert.run(username, hash, role, Date.now());
-	return { status: `${username} added in the DB` };
+	try {
+		const hash = createHash(password);
+		const roleId = getRoleDefinition(role);
+		if (!roleId) {
+			throw new Error('Role is not valid');
+		}
+		const insert = database().prepare(
+			'INSERT INTO user (username, password, role, created_at ) VALUES (?, ?, ?,?)',
+		);
+		insert.run(username, hash, roleId, Date.now());
+		return { status: `${username} added in the DB` };
+	} catch (error) {
+		return { error: error.message };
+	}
 };
 
 export const queryUser = (username, password) => {
@@ -79,6 +87,15 @@ export const getPicture = (username) => {
 	} catch (error) {
 		return error.message;
 	}
+};
+
+const getRoleDefinition = (role) => {
+	const query = database().prepare('SELECT id FROM roles WHERE name = ?');
+	const roleId = query.get(role);
+	if (!roleId) {
+		throw new Error('Role not valid');
+	}
+	return roleId.id;
 };
 
 export const getRole = (username) => {

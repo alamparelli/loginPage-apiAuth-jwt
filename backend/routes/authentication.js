@@ -16,7 +16,7 @@ router.post(
 		body('role')
 			.isString()
 			.isLength({ max: 10 })
-			.withMessage('Only STing accepted'),
+			.withMessage('Only String accepted'),
 	],
 	(req, res) => {
 		try {
@@ -26,7 +26,8 @@ router.post(
 				return res.status(400).json({ errors: errors.array() });
 			}
 			const { username, password, role } = req.body;
-			res.status(200).json(addUser(username, password, role));
+			const operation = addUser(username, password, role);
+			res.status(200).json(operation);
 		} catch (error) {
 			res.status(400).json({ error: error.message });
 		}
