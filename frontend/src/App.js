@@ -3,10 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login.js';
 import LoginForm from './pages/LoginForm.js';
 import User from './pages/User.js';
+import { AuthProvider } from './components/AuthContext';
 
 function App() {
 	return (
-		<body>
+		<AuthProvider>
 			<Router>
 				<Routes>
 					<Route path="/" element={<Login />} />
@@ -15,7 +16,7 @@ function App() {
 					<Route path="*" element={<Login />} />{' '}
 				</Routes>
 			</Router>
-		</body>
+		</AuthProvider>
 	);
 }
 

@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { addUser, queryUser } from '../controllers/database.js';
+import { addUser, getRole, queryUser } from '../controllers/database.js';
 import { createAccessToken } from '../controllers/authentication.js';
 import { body, validationResult } from 'express-validator';
+import { checkToken } from '../controllers/authentication.js';
 
 const router = Router();
 
@@ -73,6 +74,20 @@ router.post('/logout', (req, res) => {
 		}
 	} catch (error) {
 		res.status(401).json({ error: error.message, logged: false });
+	}
+});
+
+router.post('/role', async (req, res) => {
+	try {
+		const { username } = req.body;
+		if (checkToken(req.cookies.authcookie)) {
+			const userRole = await getRole(username);
+			res.status(200).json({ role: userRole });
+		} else {
+			throw new Error('Failed to verify the accessToken');
+		}
+	} catch (error) {
+		res.status(401).json({ error: error.message });
 	}
 });
 

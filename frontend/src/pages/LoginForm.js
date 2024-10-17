@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
+import AuthContext from '../components/AuthContext';
 
 function LoginForm() {
-	const [token, setToken] = useState(null);
+	const { setAccessToken } = useContext(AuthContext);
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
+	const navigate = useNavigate();
+
+	const validateToken = async (accessToken) => {
+		const decodedToken = jwtDecode(accessToken);
+		return decodedToken.password === password;
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -24,7 +33,11 @@ function LoginForm() {
 			}
 
 			const data = await response.json();
-			setToken(data.token);
+			setAccessToken(data.token);
+
+			const tokenIsValid = await validateToken(data.token);
+
+			if (tokenIsValid) navigate('/user');
 		} catch (err) {
 			setError(err.message); // Set error message for UI feedback
 		} finally {
@@ -33,10 +46,10 @@ function LoginForm() {
 	};
 
 	return (
-		<div class="flex-container">
-			<form class="login-box login-box-color" onSubmit={handleSubmit}>
+		<div className="flex-container">
+			<form className="login-box login-box-color" onSubmit={handleSubmit}>
 				<input
-					class="login-input"
+					className="login-input"
 					type="email"
 					name="username"
 					value={username}
@@ -45,7 +58,7 @@ function LoginForm() {
 					required
 				/>
 				<input
-					class="login-input"
+					className="login-input"
 					type="password"
 					name="password"
 					value={password}
@@ -56,7 +69,7 @@ function LoginForm() {
 				{error && <p style={{ color: 'red' }}>{error}</p>}
 				<button
 					type="submit"
-					class="button-layout button-box"
+					className="button-layout button-box"
 					disabled={isLoading}
 				>
 					{isLoading ? 'Wait' : 'Login'}

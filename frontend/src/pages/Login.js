@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom';
 
 function Login() {
 	return (
-		<div class="flex-container">
-			<div class="login-box">
+		<div className="flex-container">
+			<div className="login-box">
 				<img src="https://picsum.photos/200" alt="Placeholder" />
 				<Link to="/LoginForm">
-					<button class="button-layout button-box">Login</button>
+					<button className="button-layout button-box">Login</button>
 				</Link>
 			</div>
 		</div>

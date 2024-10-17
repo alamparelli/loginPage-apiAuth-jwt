@@ -104,9 +104,14 @@ export const getRole = (username) => {
 		const query = database().prepare(
 			'SELECT role FROM user WHERE username = ?',
 		);
+		const queryRoleName = database().prepare(
+			'SELECT user.username, roles.name FROM roles INNER JOIN user ON roles.id = user.role WHERE user.role = ?',
+		);
 		const user = query.get(username);
+		const role = queryRoleName.get(user.role);
+
 		if (user) {
-			return user.role;
+			return role.name;
 		} else {
 			return false;
 		}
