@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from 'react-router-dom';
 
 function User() {
 	return (
@@ -63,9 +63,11 @@ function User() {
 							</button>
 						</div>
 					</div>
-					<button class="button-layout" type="button">
-						Logout
-					</button>
+					<Link to="/Login">
+						<button class="button-layout" type="button">
+							Logout
+						</button>
+					</Link>
 				</div>
 			</div>
 		</div>
