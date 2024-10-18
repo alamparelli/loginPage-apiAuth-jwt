@@ -1,40 +1,61 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../components/AuthContext';
 import { jwtDecode } from 'jwt-decode';
 
 function User() {
-	const { accessToken } = useContext(AuthContext);
+	const navigate = useNavigate();
+	const { accessToken, setAccessToken } = useContext(AuthContext);
 	const [isVisible, setIsVisible] = useState(true);
-	const [username, setUsername] = useState('');
+	const { username, setUsername } = useContext(AuthContext);
+	const { role, setRole } = useContext(AuthContext);
 
 	useEffect(() => {
+		const getCookie = async () => {};
+
 		if (accessToken) {
 			const decodedToken = jwtDecode(accessToken);
 			setUsername(decodedToken.username);
-		}
 
-		const fetchUserRole = async () => {
-			try {
-				const response = await fetch('http://localhost:4000/role', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ username }),
-				});
+			const fetchUserRole = async () => {
+				try {
+					const response = await fetch('http://localhost:4000/role', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({ username }),
+					});
 
-				const data = await response.json();
-				setIsVisible(data.role === 'user');
-			} catch (error) {
-				console.error('Error fetching user role:', error);
+					const data = await response.json();
+					setRole(data.role);
+					setIsVisible(data.role === 'user');
+				} catch (error) {
+					console.error('Error fetching user role:', error);
+				}
+			};
+
+			if (username) {
+				fetchUserRole();
 			}
-		};
-
-		if (username) {
-			fetchUserRole();
+		} else {
+			navigate('/Login');
 		}
-	}, [accessToken, username]);
+	}, [accessToken, username, setRole, setUsername]);
+
+	const handleClickLogoff = async (e) => {
+		const userConfirmed = window.confirm('Are you sure you want to Log out?');
+		if (userConfirmed) {
+			setAccessToken('');
+			setRole('');
+			navigate('/Login');
+		} else {
+			return;
+		}
+	};
+
+	const handleSubmitChgBackgroundColor = async (e) => {};
+	const handleSubmitAddUsers = async (e) => {};
 
 	return (
 		<div className="flex-container-user">
@@ -44,7 +65,7 @@ function User() {
 				alt="Placeholder"
 			/>
 			<div className="flexbox-user-infos">
-				<h1>Welcome {username}!</h1>
+				<h1>Welcome {role}!</h1>
 				<p>
 					Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque
 					laborum ratione, neque laboriosam tempore deserunt, excepturi
@@ -106,9 +127,18 @@ function User() {
 							</button>
 						</div>
 					</div>
-					<Link to="/Login">
+
+					<button
+						onClick={handleClickLogoff}
+						className="button-layout"
+						type="button"
+					>
+						Logout
+					</button>
+
+					<Link to="/User2">
 						<button className="button-layout" type="button">
-							Logout
+							User2
 						</button>
 					</Link>
 				</div>

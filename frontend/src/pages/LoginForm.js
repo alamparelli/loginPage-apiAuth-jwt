@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import AuthContext from '../components/AuthContext';
 
 function LoginForm() {
+	const navigate = useNavigate();
 	const { setAccessToken } = useContext(AuthContext);
-	const [username, setUsername] = useState('');
+	const { username, setUsername } = useContext(AuthContext);
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
-	const navigate = useNavigate();
 
 	const validateToken = async (accessToken) => {
 		const decodedToken = jwtDecode(accessToken);
@@ -34,14 +34,13 @@ function LoginForm() {
 
 			const data = await response.json();
 			setAccessToken(data.token);
-
 			const tokenIsValid = await validateToken(data.token);
 
 			if (tokenIsValid) navigate('/user');
 		} catch (err) {
-			setError(err.message); // Set error message for UI feedback
+			setError(err.message);
 		} finally {
-			setIsLoading(false); // End the loading spinner
+			setIsLoading(false);
 		}
 	};
 
@@ -66,7 +65,7 @@ function LoginForm() {
 					placeholder="Password"
 					required
 				/>
-				{error && <p style={{ color: 'red' }}>{error}</p>}
+				{error && <p className="error">{error}</p>}
 				<button
 					type="submit"
 					className="button-layout button-box"

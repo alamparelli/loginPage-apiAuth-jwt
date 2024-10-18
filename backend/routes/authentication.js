@@ -48,6 +48,7 @@ router.post('/login', (req, res) => {
 				httpOnly: true,
 				secure: true,
 				sameSite: 'Strict',
+				path: '/',
 			});
 			res.status(200).json({ token: accessToken, logged: true });
 		} else {
