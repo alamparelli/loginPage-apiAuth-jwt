@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AppContext from '../components/AppContext';
 
 function User() {
@@ -7,6 +7,17 @@ function User() {
 	const { backgroundColor, setBackgroundColor } = useContext(AppContext);
 	const { username, setUsername } = useContext(AppContext);
 	const { role, setRole } = useContext(AppContext);
+	const [newUser, setNewUser] = useState({
+		username: '',
+		password: '',
+		role: 'user',
+	});
+
+	useEffect(() => {
+		if (backgroundColor) {
+			document.body.style.backgroundColor = backgroundColor;
+		}
+	}, [backgroundColor]);
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -31,25 +42,7 @@ function User() {
 			}
 		};
 
-		// const fetchBgColor = async () => {
-		// 	try {
-		// 		const response = await fetch('http://localhost:4000/getbgcolor', {
-		// 			credentials: 'include',
-		// 			headers: {
-		// 				'Content-Type': 'application/json',
-		// 			},
-		// 		});
-
-		// 		const data = await response.json();
-		// 		setBackgroundColor(data.value);
-		// 	} catch (error) {
-		// 		console.error('Error:', error);
-		// 	}
-		// };
-
 		fetchUser();
-		// fetchBgColor();
-		document.body.style.backgroundColor = backgroundColor;
 	}, [username]);
 
 	const handleClickLogoff = async (e) => {
@@ -87,6 +80,23 @@ function User() {
 		}
 	};
 
+	const handleSubbmitNewUser = async (e) => {
+		e.preventDefault();
+		try {
+			await fetch('http://localhost:4000/register', {
+				method: 'POST',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(newUser),
+			});
+			console.log(newUser);
+		} catch (error) {
+			console.error('Error ', error);
+		}
+	};
+
 	return (
 		<div>
 			<div className="flex-container-user">
@@ -106,18 +116,41 @@ function User() {
 					<div className="half-size">
 						{role === 'admin' && (
 							<div className="settings-box">
-								<form>
+								<form onSubmit={handleSubbmitNewUser}>
 									<h2 className="label-userpage">Add User</h2>
-									<label className="label-userpage">Username</label>
+									<label htmlFor="roleNew" className="label-userpage">
+										Role
+									</label>
+									<div className="settings-box-sub">
+										<select
+											className="login-input login-input-size"
+											name="roleNew"
+											id="roleNew"
+											value={newUser.role}
+											onChange={(e) =>
+												setNewUser({ ...newUser, role: e.target.value })
+											}
+										>
+											<option value="user">User</option>
+											<option value="admin">Admin</option>
+										</select>
+									</div>
+									<label htmlFor="emailNew" className="label-userpage">
+										Username
+									</label>
 									<div className="settings-box-sub">
 										<input
 											className="login-input login-input-size"
 											type="email"
-											name="email"
-											id="email"
+											name="emailNew"
+											id="emailNew"
 											placeholder="Username"
+											value={newUser.email}
 											autoComplete="new-username"
-											required=""
+											onChange={(e) =>
+												setNewUser({ ...newUser, username: e.target.value })
+											}
+											required
 										/>
 										<button
 											className="button-layout button-box display-none"
@@ -126,18 +159,24 @@ function User() {
 											Create
 										</button>
 									</div>
-									<label className="label-userpage">Password</label>
+									<label htmlFor="passwordNew" className="label-userpage">
+										Password
+									</label>
 									<div className="settings-box-sub">
 										<input
 											className="login-input login-input-size"
 											type="password"
-											name="password"
-											id="password"
+											name="passwordNew"
+											id="passwordNew"
 											placeholder="Password"
 											autoComplete="new-password"
-											required=""
+											value={newUser.password}
+											onChange={(e) =>
+												setNewUser({ ...newUser, password: e.target.value })
+											}
+											required
 										/>
-										<button className="button-layout button-box" type="button">
+										<button className="button-layout button-box" type="submit">
 											Create
 										</button>
 									</div>
@@ -146,7 +185,9 @@ function User() {
 						)}
 						<div className="settings-box">
 							<form onSubmit={handleChangeBg}>
-								<label className="label-userpage">Background color</label>
+								<label htmlFor="background" className="label-userpage">
+									Background color
+								</label>
 								<div className="settings-box-sub">
 									<select
 										className="login-input login-input-size"
@@ -155,11 +196,41 @@ function User() {
 										value={backgroundColor}
 										onChange={(e) => setBackgroundColor(e.target.value)}
 									>
-										<option value="red">red</option>
-										<option value="blue">blue</option>
+										<option value="blue">Blue</option>
+										<option value="red">Red</option>
+										<option value="green">Green</option>
+										<option value="yellow">Yellow</option>
+										<option value="orange">Orange</option>
+										<option value="purple">Purple</option>
+										<option value="pink">Pink</option>
+										<option value="brown">Brown</option>
+										<option value="black">Black</option>
+										<option value="white">White</option>
+										<option value="gray">Gray</option>
+										<option value="cyan">Cyan</option>
+										<option value="magenta">Magenta</option>
+										<option value="lime">Lime</option>
+										<option value="navy">Navy</option>
+										<option value="teal">Teal</option>
+										<option value="olive">Olive</option>
+										<option value="maroon">Maroon</option>
+										<option value="violet">Violet</option>
+										<option value="indigo">Indigo</option>
+										<option value="gold">Gold</option>
+										<option value="silver">Silver</option>
+										<option value="coral">Coral</option>
+										<option value="aqua">Aqua</option>
+										<option value="khaki">Khaki</option>
+										<option value="plum">Plum</option>
+										<option value="salmon">Salmon</option>
+										<option value="turquoise">Turquoise</option>
+										<option value="chocolate">Chocolate</option>
+										<option value="tomato">Tomato</option>
+										<option value="sienna">Sienna</option>
+										<option value="orchid">Orchid</option>
 									</select>
 									<button className="button-layout button-box" type="submit">
-										Apply
+										Save
 									</button>
 								</div>
 							</form>

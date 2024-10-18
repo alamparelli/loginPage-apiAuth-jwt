@@ -1,4 +1,4 @@
-INSERT INTO settings (name, value, user_id) VALUES ("bgColor", "magenta", 2);
+INSERT INTO settings (name, value, user_id) VALUES ("bgColor", "red",1);
 INSERT INTO roles (name) VALUES ("user");
 
 UPDATE settings SET value = ? INNER JOIN user ON settings.user_id = user.id WHERE user.username = ? and name = ?

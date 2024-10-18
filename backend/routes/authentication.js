@@ -13,7 +13,7 @@ router.post(
 		body('password')
 			.isLength({ min: 8, max: 256 })
 			.isStrongPassword()
-			.withMessage('Minimum 8 chars, max 25 chars'),
+			.withMessage('Minimum 8 chars, max 25 chars, and StrongPassword needed'),
 		body('role')
 			.isString()
 			.isLength({ max: 10 })

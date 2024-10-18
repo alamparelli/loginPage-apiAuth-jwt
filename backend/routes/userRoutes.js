@@ -6,7 +6,6 @@ import jwt from 'jsonwebtoken';
 const router = Router();
 
 router.get('/user', (req, res) => {
-	console.log(req.cookies.authcookie);
 	if (req.cookies.authcookie) {
 		let jwtDecoded = jwt.decode(req.cookies.authcookie);
 		const query = queryUser(jwtDecoded.username);

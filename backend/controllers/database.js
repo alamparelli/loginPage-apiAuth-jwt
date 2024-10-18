@@ -28,6 +28,8 @@ export const addUser = (username, password, role) => {
 			'INSERT INTO user (username, password, role, created_at ) VALUES (?, ?, ?,?)',
 		);
 		insert.run(username, hash, roleId, Date.now());
+
+		initSetting('bgColor', '#89d1c8', username);
 		return { status: `${username} added in the DB` };
 	} catch (error) {
 		return { error: error.message };
@@ -53,40 +55,40 @@ export const queryAll = () => {
 	return query.all();
 };
 
-// export const setPicture = (image) => {
-// 	// record the image as blob in the db
-// 	try {
-// 		fs.readFile(image, (err, data) => {
-// 			if (err) throw err;
-// 			const base64Image = data.toString('base64');
+export const setPicture = (image) => {
+	// record the image as blob in the db
+	try {
+		fs.readFile(image, (err, data) => {
+			if (err) throw err;
+			const base64Image = data.toString('base64');
 
-// 			const insert = database().prepare(
-// 				'INSERT INTO user (profilePicture) VALUES (?) WHERE username = ?',
-// 			);
-// 			insert.run(base64Image, username);
-// 			return { status: `${username} added in the DB` };
-// 		});
-// 	} catch (error) {
-// 		return error.message;
-// 	}
-// };
+			const insert = database().prepare(
+				'INSERT INTO user (profilePicture) VALUES (?) WHERE username = ?',
+			);
+			insert.run(base64Image, username);
+			return { status: `${username} added in the DB` };
+		});
+	} catch (error) {
+		return error.message;
+	}
+};
 
-// export const getPicture = (username) => {
-// 	//retrieve image for the user
-// 	try {
-// 		const query = database().prepare(
-// 			'SELECT profilePicture FROM user WHERE username = ?',
-// 		);
-// 		const user = query.get(username);
-// 		if (user) {
-// 			return user.profilePicture; //in Base64Image
-// 		} else {
-// 			return false;
-// 		}
-// 	} catch (error) {
-// 		return error.message;
-// 	}
-// };
+export const getPicture = (username) => {
+	//retrieve image for the user
+	try {
+		const query = database().prepare(
+			'SELECT profilePicture FROM user WHERE username = ?',
+		);
+		const user = query.get(username);
+		if (user) {
+			return user.profilePicture; //in Base64Image
+		} else {
+			return false;
+		}
+	} catch (error) {
+		return error.message;
+	}
+};
 
 const getRoleDefinition = (role) => {
 	const query = database().prepare('SELECT id FROM roles WHERE name = ?');
@@ -95,6 +97,13 @@ const getRoleDefinition = (role) => {
 		throw new Error('Role not valid');
 	}
 	return roleId.id;
+};
+
+const initSetting = (settingName, value, username) => {
+	const query = database().prepare(
+		'INSERT INTO settings (name, value, user_id) VALUES (?, ?,(SELECT id FROM user WHERE username = ?))',
+	);
+	query.run(settingName, value, username);
 };
 
 export const setSetting = (settingName, value, username) => {
