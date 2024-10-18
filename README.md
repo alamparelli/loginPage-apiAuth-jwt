@@ -59,16 +59,10 @@ This project demonstrates proficiency in several important web development conce
    ```
 
 3. Set up environment variables (refer to .env.example in the backend folder)
-4. Start the backend server:
+4. Start the backed & frontend server:
 
    ```
-   cd backend && npm start
-   ```
-
-5. Start the frontend development server:
-
-   ```
-   cd frontend && npm start
+    npm start
    ```
 
 ## Future Improvements
