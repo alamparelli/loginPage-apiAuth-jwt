@@ -81,3 +81,4 @@ cypress/videos/
 # Minified files
 *.min.js
 *.min.css
+backend/models/query.sql

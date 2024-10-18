@@ -1,12 +1,17 @@
 // eslint.config.js
 import js from '@eslint/js';
 import perfectionistAlphabetical from 'eslint-plugin-perfectionist/configs/recommended-alphabetical';
+import tailwindcss from 'eslint-plugin-tailwindcss';
 
 export default [
 	perfectionistAlphabetical,
+	tailwindcss,
 	js.configs.recommended,
 	{
-		plugins: {},
+		plugins: {
+			perfectionist: 'eslint-plugin-perfectionist',
+			tailwindcss: 'eslint-plugin-tailwindcss',
+		},
 		rules: {
 			'accessor-pairs': 'error',
 			'dot-notation': 'error',
