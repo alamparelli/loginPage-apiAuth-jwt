@@ -1,20 +1,13 @@
 import React, { useContext, useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import AuthContext from '../components/AuthContext';
+import AppContext from '../components/AppContext';
 
 function LoginForm() {
 	const navigate = useNavigate();
-	const { setAccessToken } = useContext(AuthContext);
-	const { username, setUsername } = useContext(AuthContext);
+	const { username, setUsername } = useContext(AppContext);
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
-
-	const validateToken = async (accessToken) => {
-		const decodedToken = jwtDecode(accessToken);
-		return decodedToken.password === password;
-	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -25,6 +18,7 @@ function LoginForm() {
 				headers: {
 					'Content-Type': 'application/json',
 				},
+				credentials: 'include', // that's what missed in code
 				body: JSON.stringify({ username, password }),
 			});
 
@@ -33,10 +27,8 @@ function LoginForm() {
 			}
 
 			const data = await response.json();
-			setAccessToken(data.token);
-			const tokenIsValid = await validateToken(data.token);
 
-			if (tokenIsValid) navigate('/user');
+			if (data.logged) navigate('/user');
 		} catch (err) {
 			setError(err.message);
 		} finally {
@@ -54,6 +46,7 @@ function LoginForm() {
 					value={username}
 					onChange={(e) => setUsername(e.target.value)}
 					placeholder="Username"
+					autoComplete="current-username"
 					required
 				/>
 				<input
@@ -63,6 +56,7 @@ function LoginForm() {
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
 					placeholder="Password"
+					autoComplete="current-password"
 					required
 				/>
 				{error && <p className="error">{error}</p>}

@@ -1,6 +1,6 @@
-import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
@@ -20,7 +20,12 @@ const port = 4000;
 // 	legacyHeaders: false,
 // });
 
-app.use(cors());
+app.use(
+	cors({
+		origin: 'http://localhost:3000',
+		credentials: true,
+	}),
+);
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

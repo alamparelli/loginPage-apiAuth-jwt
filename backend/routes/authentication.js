@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { addUser, getRole, queryUser } from '../controllers/database.js';
+import { addUser, queryUser } from '../controllers/database.js';
 import { createAccessToken } from '../controllers/authentication.js';
 import { body, validationResult } from 'express-validator';
 import { checkToken } from '../controllers/authentication.js';
@@ -41,7 +41,6 @@ router.post('/login', (req, res) => {
 		if (queryUser(username, password)) {
 			const accessToken = createAccessToken({
 				username: username,
-				password: password,
 			});
 			res.cookie('authcookie', accessToken, {
 				maxAge: 900000,
@@ -50,7 +49,7 @@ router.post('/login', (req, res) => {
 				sameSite: 'Strict',
 				path: '/',
 			});
-			res.status(200).json({ token: accessToken, logged: true });
+			res.status(200).json({ logged: true });
 		} else {
 			res
 				.status(403)
@@ -66,12 +65,11 @@ router.post('/logout', (req, res) => {
 		if (req.cookies.authcookie) {
 			res.clearCookie('authcookie', {
 				httpOnly: true,
-				secure: true,
-				sameSite: 'Strict',
+				secure: false,
 			});
 			res.status(200).json({ message: 'Cookie cleared', logged: false });
 		} else {
-			throw new Error('Auth Cookie not Found');
+			res.status(200).json({ message: 'No Cookie found!', logged: false });
 		}
 	} catch (error) {
 		res.status(401).json({ error: error.message, logged: false });
@@ -79,12 +77,16 @@ router.post('/logout', (req, res) => {
 });
 
 router.post('/role', async (req, res) => {
-	try {
-		const { username } = req.body;
-		const userRole = await getRole(username);
-		res.status(200).json({ role: userRole });
-	} catch (error) {
-		res.status(401).json({ error: error.message });
+	if (checkToken(req.cookies.authcookie)) {
+		try {
+			const { username } = req.body;
+			const userRole = await getRole(username);
+			res.status(200).json({ role: userRole });
+		} catch (error) {
+			res.status(401).json({ error: error.message });
+		}
+	} else {
+		res.status(401).json({ Access: 'Not Authorized' });
 	}
 });
 

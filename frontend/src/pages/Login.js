@@ -1,6 +1,29 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
 
 function Login() {
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		const fetchUser = async () => {
+			try {
+				const response = await fetch('http://localhost:4000/user', {
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					credentials: 'include',
+				});
+
+				const data = await response.json();
+				if (data.username) {
+					navigate('/User');
+				}
+			} catch (error) {}
+		};
+
+		fetchUser();
+	}, []);
+
 	return (
 		<div className="flex-container">
 			<div className="login-box">

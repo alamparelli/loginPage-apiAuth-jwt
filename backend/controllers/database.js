@@ -34,16 +34,15 @@ export const addUser = (username, password, role) => {
 	}
 };
 
-export const queryUser = (username, password) => {
-	const query = database().prepare('SELECT * FROM user WHERE username = ?');
+export const queryUser = (username) => {
+	const query = database().prepare(
+		'SELECT user.id, user.username,user.profilePicture, roles.name as role FROM roles INNER JOIN user ON roles.id = user.role WHERE user.username = ?',
+	);
 	const user = query.get(username);
+	const bgColor = getSetting('bgColor', user.username);
+	user.bgColor = bgColor.value;
 	if (user) {
-		const isValid = checkHash(password, user.password);
-		if (isValid) {
-			return true;
-		} else {
-			return false;
-		}
+		return user;
 	} else {
 		return false;
 	}
@@ -54,40 +53,40 @@ export const queryAll = () => {
 	return query.all();
 };
 
-export const setPicture = (image) => {
-	// record the image as blob in the db
-	try {
-		fs.readFile(image, (err, data) => {
-			if (err) throw err;
-			const base64Image = data.toString('base64');
+// export const setPicture = (image) => {
+// 	// record the image as blob in the db
+// 	try {
+// 		fs.readFile(image, (err, data) => {
+// 			if (err) throw err;
+// 			const base64Image = data.toString('base64');
 
-			const insert = database().prepare(
-				'INSERT INTO user (profilePicture) VALUES (?) WHERE username = ?',
-			);
-			insert.run(base64Image, username);
-			return { status: `${username} added in the DB` };
-		});
-	} catch (error) {
-		return error.message;
-	}
-};
+// 			const insert = database().prepare(
+// 				'INSERT INTO user (profilePicture) VALUES (?) WHERE username = ?',
+// 			);
+// 			insert.run(base64Image, username);
+// 			return { status: `${username} added in the DB` };
+// 		});
+// 	} catch (error) {
+// 		return error.message;
+// 	}
+// };
 
-export const getPicture = (username) => {
-	//retrieve image for the user
-	try {
-		const query = database().prepare(
-			'SELECT profilePicture FROM user WHERE username = ?',
-		);
-		const user = query.get(username);
-		if (user) {
-			return user.profilePicture; //in Base64Image
-		} else {
-			return false;
-		}
-	} catch (error) {
-		return error.message;
-	}
-};
+// export const getPicture = (username) => {
+// 	//retrieve image for the user
+// 	try {
+// 		const query = database().prepare(
+// 			'SELECT profilePicture FROM user WHERE username = ?',
+// 		);
+// 		const user = query.get(username);
+// 		if (user) {
+// 			return user.profilePicture; //in Base64Image
+// 		} else {
+// 			return false;
+// 		}
+// 	} catch (error) {
+// 		return error.message;
+// 	}
+// };
 
 const getRoleDefinition = (role) => {
 	const query = database().prepare('SELECT id FROM roles WHERE name = ?');
@@ -98,32 +97,20 @@ const getRoleDefinition = (role) => {
 	return roleId.id;
 };
 
-export const getRole = (username) => {
-	//retrieve the user role
-	try {
-		const query = database().prepare(
-			'SELECT role FROM user WHERE username = ?',
-		);
-		const queryRoleName = database().prepare(
-			'SELECT user.username, roles.name FROM roles INNER JOIN user ON roles.id = user.role WHERE user.role = ?',
-		);
-		const user = query.get(username);
-		const role = queryRoleName.get(user.role);
-
-		if (user) {
-			return role.name;
-		} else {
-			return false;
-		}
-	} catch (error) {
-		return error.message;
-	}
-};
-
 export const setSetting = (settingName, value, username) => {
-	//record a setting
+	const query = database().prepare(
+		'UPDATE settings SET value = ? WHERE user_id = (SELECT id FROM user WHERE username = ?) AND name = ?',
+	);
+	query.run(value, username, settingName);
 };
 
 export const getSetting = (settingName, username) => {
-	//retrieve a specific settings
+	const query = database().prepare(
+		'SELECT settings.name, settings.value FROM settings INNER JOIN user ON settings.user_id = user.id WHERE user.username = ? and name = ?',
+	);
+	const result = query.get(username, settingName);
+	if (!result) {
+		throw new Error('settings not found');
+	}
+	return result;
 };
