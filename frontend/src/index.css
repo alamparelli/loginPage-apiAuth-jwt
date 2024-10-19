@@ -125,7 +125,7 @@ code {
 		width: 75vw;
 		justify-content: left;
 		align-items: top;
-		min-height: 100vh;
+		min-height: 100%;
 	}
 
 	.flexbox-user-infos {
@@ -148,7 +148,7 @@ code {
 		margin-left: 20%;
 		justify-content: left;
 		align-items: top;
-		height: 100vh;
+		height: 100%;
 	}
 
 	.flexbox-user-infos {
@@ -156,5 +156,11 @@ code {
 		flex-direction: column;
 		padding: 1rem;
 		width: 70vh;
+	}
+}
+
+@media screen and (min-width: 900px) {
+	.flex-container-user {
+		margin-top: 7rem;
 	}
 }
